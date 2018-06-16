@@ -1,0 +1,86 @@
+import numpy as np
+import pandas as pd
+from sklearn import datasets
+import matplotlib.pyplot as plt
+
+position_salaries = { 'Position' : [	'Business Analyst','Junior Consultant','Senior Consultant','Manager','Country Manager',
+'Region Manager','Partner','Senior Partner','C-level','CEO'],
+'Salary' : [45000,50000,60000,80000,110000,150000,200000,300000,500000,1000000],
+'Level' : [1,2,3,4,5,6,7,8,9,10]
+}
+
+data = pd.DataFrame(position_salaries)
+X = data.iloc[:,0:1].values# From This X will consider as matrix
+y = data.iloc[:,2].values
+
+# Here we do not need to split our data into training set or test 
+# set because we do not have enough amount of data here
+
+
+# Fitting linear Regression to the datasets
+from sklearn.linear_model import LinearRegression
+
+lin_reg = LinearRegression()
+lin_reg.fit(X,y)
+
+#Fitting Polynomial Regression to the datasets
+from sklearn.preprocessing import PolynomialFeatures
+# Poly_reg willl create polynomial variables
+# poly_reg = PolynomialFeatures(degree = 2)
+poly_reg = PolynomialFeatures(degree = 4)
+X_poly = poly_reg.fit_transform(X)
+# fit will create Polynomial values and transform is use to pass that value to X_poly
+# This X_poly have 3 column 1 column contain all 1 that will point to bzero variable and then we have our column and another is square of that variable
+lin_reg2 = LinearRegression()
+lin_reg2.fit(X_poly, y)
+
+# or if we want to get accurate result  then it is important to have enough amount of data
+
+# we do not need to do any feature scalling because we will use sane linear and multilinear regression class 
+#  so these library will automatically do feature scalling for data
+
+
+
+
+
+# Visualising the Linear Regression result
+plt.scatter(X, y, color = 'red')
+plt.plot(X, lin_reg.predict(X),color = 'blue')
+plt.title('Truth or Bluff(Linear Regression)')
+plt.xlabel('Position Level')
+plt.ylabel('Salary')
+plt.show()
+
+
+# Visualizing the Polynomial Regression
+plt.scatter(X, y, color = 'red')
+plt.plot(X, lin_reg2.predict(X_poly),color = 'blue')
+plt.title('Truth or Bluff(Polynomial Regression)')
+plt.xlabel('Position Level')
+plt.ylabel('Salary')
+plt.show()
+
+
+
+
+##########################################################################
+X_grid = np.arange(min(X), max(X), 0.1)
+# we are using this line of code because our curve id drawing line of 1 length after that it is changeing the line to another direction till 1 length
+# SO we are reducing this length from 1 to 0.1 so our curve will create new line after 0.1 length
+# np.arange will give a Vector
+# So we will convert Vector to Matrix By Using THis Method
+X_grid = X_grid.reshape(len(X_grid), 1)
+# we are predicting Y coordinate by using predict Variable
+X_grid_poly = poly_reg.fit_transform(X_grid)
+plt.scatter(X, y, color = 'red')
+plt.plot(X_grid, lin_reg2.predict(X_grid_poly),color = 'blue')
+plt.title('Truth or Bluff(Polynomial Regression)')
+plt.xlabel('Position Level')
+plt.ylabel('Salary')
+plt.show()
+
+#Predicting A result with Linear Regression
+lin_reg.predict(6.5)
+#This Answere Is not relevent
+#Predicting A result with Polynomial Regression
+lin_reg2.predict(poly_reg.fit_transform(6.5))
